@@ -2,42 +2,53 @@ TITLE	CALCULADORA
 .MODEL	SMALL
 .STACK	0100H
 .DATA
-BARRAN		DB	0AH,0DH,'$'
-INTROCALC	DB	'CalculadoraMB8086','$'
-OP			DB 	'    Operacoes disponiveis:',0AH,0DH,'     a. AND',0AH,0DH,'     b. OR',0AH,0DH,'     c. XOR',0AH,0DH,'     d. NOT',0AH,0DH,'     e. Soma',0AH,0DH,'     f. Subtracao',0AH,0DH,'     g. Multiplicacao',0AH,0DH,'     h. Divisao',0AH,0DH,'     i. Mult por 2',0AH,0DH,'     j. Div por 2',0AH,0DH,'$'
-BASENUM		DB	' Bases numericas disponiveis: ',0AH,0DH,0AH,0DH,'     1. Decimal [{0,1,2,3,4,5,6,7,8,9}, [-32768, +32767]] ',0AH,0DH,'     2. Binario [{0, 1}, MAX 16 BITS] ',0AH,0DH,'     3. Hexadecimal [{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}, MAX 4 CARACTERES]',0AH,0DH,'     4. Quaternario [{0,1,2,3}, MAX 8 CARACTERES]',0AH,0DH,'$'		
-VAULTD		DW	?
-VAULTC		DW	?
-OP?			DB	0AH,0DH,' Insira a operacao desejada: $'
-BASE?		DB	0AH,0DH,' Insira a base desejada: $'
-OPA			DB	' Opcao "a"(AND) escolhida: $'
-OPB			DB	' Opcao "b"(OR) escolhida: $'
-OPC			DB	' Opcao "c"(XOR) escolhida: $'
-OPD			DB	' Opcao "d"(NOT) escolhida: $'
-OPE			DB	' Opcao "e"(Soma) escolhida: $'
-OPF			DB	' Opcao "f"(Subt) escolhida: $'
-OPG			DB	' Opcao "g"(Mult) escolhida: $'
-OPH			DB	' Opcao "h"(Div) escolhida: $'
-OPI			DB	' Opcao "i"(Mult/2) escolhida: $'
-OPJ			DB	' Opcao "j"(Div/2) escolhida: $'
-DIV2		DB	' Digite o numero a ser dividido por 2: $'
-MUL2		DB	' Digite o numero a ser multiplicado por 2: $'
-QTDPOR2		DB	' Digite a quantidade de vezes por 2: $'
-COCIENTEDIV	DB	' O quociente da divisao deu: $'
-RESTODIV	DB	' O resto da divisao deu:     $'
-MSG1		DB	0AH,0DH,0AH,0DH,' Digite o primeiro numero: $'
-MSG2		DB	' Digite o segundo numero: $'
-MSGNOT		DB	0AH,0DH,0AH,0DH,' Digite um numero: $'
-DENOVO		DB	' Deseja realizar outra operacao?',0AH,0DH,0AH,0DH,'     1. Sim',0AH,0DH,'     2. Nao',0AH,0DH,0AH,0DH, ' Digite a opcao: $'
-RES 		DB	' O Resultado eh: $'	
-VAULTNUM	DW	?
-VAULT2		DW	?
-RESAGAIN	DB	?
-COCIENTE	DB	?
-RESTO		DB	?
-SHIFT4	DW	4;movo esse valor para o cx
-SHIFT2	DW	2;movo esse valor para o cx
-VAULTCX	DW ?;para receber hexa, preciso guardar o cx para o shift
+BARRAN				DB	0AH,0DH,'$'
+INTROCALC			DB	'CalculadoraMB8086','$'
+OP					DB 	'    Operacoes disponiveis:',0AH,0DH,'     a. AND',0AH,0DH,'     b. OR',0AH,0DH,'     c. XOR',0AH,0DH,'     d. NOT',0AH,0DH,'     e. Soma',0AH,0DH,'     f. Subtracao',0AH,0DH,'     g. Multiplicacao',0AH,0DH,'     h. Divisao',0AH,0DH,'     i. Mult por 2',0AH,0DH,'     j. Div por 2',0AH,0DH,'$'
+BASENUM				DB	' Bases numericas disponiveis: ',0AH,0DH,0AH,0DH,'     1. Decimal [{0,1,2,3,4,5,6,7,8,9}, [-32768, +32767]] ',0AH,0DH,'     2. Binario [{0, 1}, MAX 16 BITS] ',0AH,0DH,'     3. Hexadecimal [{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}, MAX 4 CARACTERES]',0AH,0DH,'     4. Quaternario [{0,1,2,3}, MAX 8 CARACTERES]',0AH,0DH,'$'		
+VAULTD				DW	?
+VAULTC				DW	?
+OP?					DB	0AH,0DH,' Insira a operacao desejada: $'
+BASE?				DB	0AH,0DH,' Insira a base desejada: $'
+OPA					DB	' Opcao "a"(AND) escolhida: $'
+OPB					DB	' Opcao "b"(OR) escolhida: $'
+OPC					DB	' Opcao "c"(XOR) escolhida: $'
+OPD					DB	' Opcao "d"(NOT) escolhida: $'
+OPE					DB	' Opcao "e"(Soma) escolhida: $'
+OPF					DB	' Opcao "f"(Subt) escolhida: $'
+OPG					DB	' Opcao "g"(Mult) escolhida: $'
+OPH					DB	' Opcao "h"(Div) escolhida: $'
+OPI					DB	' Opcao "i"(Mult/2) escolhida: $'
+OPJ					DB	' Opcao "j"(Div/2) escolhida: $'
+DIV2				DB	' Digite o numero a ser dividido por 2: $'
+MUL2				DB	' Digite o numero a ser multiplicado por 2: $'
+QTDPOR2				DB	' Digite a potencia de 2: $'
+QUOCIENTEDIV_DEC	DB	' O quociente da divisao em Decimal eh:     $'
+QUOCIENTEDIV_BIN	DB	' O quociente da divisao em Binario eh:     $'
+QUOCIENTEDIV_HEXA	DB	' O quociente da divisao em Hexadecimal eh: $'
+QUOCIENTEDIV_QUAT	DB	' O quociente da divisao em Quaternario eh: $'
+RESTODIV_DEC		DB	' O resto da divisao em Decimal eh:         $'
+RESTODIV_BIN		DB	' O resto da divisao em Binario eh:         $'
+RESTODIV_HEXA		DB	' O resto da divisao em Hexadecimal eh:     $'
+RESTODIV_QUAT		DB	' O resto da divisao em Quaternario eh:     $'
+MSG1				DB	0AH,0DH,0AH,0DH,' Digite o primeiro numero: $'
+MSG2				DB	' Digite o segundo numero: $'
+MSGNOT				DB	0AH,0DH,0AH,0DH,' Digite um numero: $'
+MSGBASE				DB	0AH,0DH,' Digite a base que deseja a saida(conforme o quadro acima): $';V1.1 - alterado!!!
+DENOVO				DB	' Deseja realizar outra operacao?',0AH,0DH,0AH,0DH,'     1. Sim',0AH,0DH,'     2. Nao',0AH,0DH,0AH,0DH, ' Digite a opcao: $'
+RESDEC				DB	' O Resultado em Decimal eh: $';V1.1++
+RESBIN				DB	' O Resultado em Binario eh: $';V1.1++
+RESHEXAD			DB	' O Resultado em Hexadecimal eh: $';V1.1++	
+RESQUAT				DB	' O Resultado em Quaternario eh: $';V1.1++
+VAULTNUM			DW	?
+VAULT2				DW	?
+RESAGAIN			DB	?
+COCIENTE			DB	?;mais uma vez....
+RESTO				DB	?
+SHIFT4				DW	4;movo esse valor para o cx
+SHIFT2				DW	2;movo esse valor para o cx
+VAULTCX				DW  ?;para receber hexa, preciso guardar o cx para o shift
+CHOSEOP				DB  ?;V1.1 - escolhe operacao
 
 
 .CODE
@@ -61,6 +72,7 @@ MAIN PROC
 		
 		MOV	AH,01H	;leitura da opcao escolhida
 		INT	21H
+		MOV CHOSEOP,AL;V1.1 - escolhe operacao
 		
 		CMP	AL,61H	;comeca o switch da escravidao
 		JE	a
@@ -222,14 +234,11 @@ OPCAOA PROC
 		
 		AND VAULTNUM, AX
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;retirei o mensagemres e o pulalinha
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -254,11 +263,7 @@ OPCAOA PROC
 		
 		AND BX, VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -278,11 +283,7 @@ OPCAOA PROC
 		
 		AND BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -302,11 +303,7 @@ OPCAOA PROC
 		
 		AND BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -366,13 +363,10 @@ OPCAOB PROC
 		
 		OR VAULTNUM, AX
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -397,11 +391,7 @@ OPCAOB PROC
 		
 		OR BX, VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -421,11 +411,7 @@ OPCAOB PROC
 		
 		OR BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -445,11 +431,7 @@ OPCAOB PROC
 		
 		OR BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -507,13 +489,10 @@ OPCAOC PROC
 		
 		XOR VAULTNUM, AX
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -538,11 +517,7 @@ OPCAOC PROC
 		
 		XOR BX, VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -562,11 +537,7 @@ OPCAOC PROC
 		
 		XOR BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -586,11 +557,7 @@ OPCAOC PROC
 		
 		XOR BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -644,13 +611,10 @@ OPCAOD PROC
 				
 		NOT VAULTNUM		
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -666,11 +630,7 @@ OPCAOD PROC
 		
 		NOT BX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -687,13 +647,9 @@ OPCAOD PROC
 		
 		NOT VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
 		MOV BX, VAULTNUM
 		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -709,11 +665,7 @@ OPCAOD PROC
 		
 		NOT BX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -770,13 +722,10 @@ OPCAOE PROC
 		
 		ADD VAULTNUM, AX
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -801,11 +750,7 @@ OPCAOE PROC
 		
 		ADD BX, VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -825,11 +770,7 @@ OPCAOE PROC
 		
 		ADD BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -849,11 +790,7 @@ OPCAOE PROC
 		
 		ADD BX,VAULTNUM
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -911,13 +848,10 @@ OPCAOF PROC
 		
 		SUB VAULTNUM, AX
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -942,11 +876,7 @@ OPCAOF PROC
 		
 		SUB VAULTNUM, BX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -966,11 +896,7 @@ OPCAOF PROC
 		
 		SUB VAULTNUM, BX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -990,11 +916,7 @@ OPCAOF PROC
 		
 		SUB VAULTNUM, BX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -1053,13 +975,10 @@ OPCAOG PROC
 		MUL VAULTNUM
 		MOV VAULTNUM, AX
 		
-		CALL PULALINHA
-		CALL MENSAGEMRES
+		;MOV AX, VAULTNUM
+		MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		MOV AX, VAULTNUM
-		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
-		
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1086,13 +1005,9 @@ OPCAOG PROC
 		MUL VAULTNUM
 		MOV VAULTNUM, AX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
 		MOV BX, VAULTNUM
 		
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1114,13 +1029,9 @@ OPCAOG PROC
 		MUL VAULTNUM
 		MOV VAULTNUM, AX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
 		MOV BX, VAULTNUM
 		
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -1141,13 +1052,9 @@ OPCAOG PROC
 		MUL BX
 		MOV VAULTNUM, AX
 		
-		CALL PULALINHA
-		
-		CALL MENSAGEMRES
-		
 		MOV BX, VAULTNUM
 		
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -1156,7 +1063,7 @@ OPCAOG PROC
 OPCAOG ENDP
 ;-------------------------------------------------------- OPERACAO G FIM --------------------------------------------------------;
 
-;-------------------------------------------------------- OPERACAO H ------------------------------------------------------------;
+;-------------------------------------------------------- OPERACAO H ------------------------------------------------------------;AINDA NÃO FOI INSERIDO O PRINTBASEESCOLHIDA A PARTIR DAQUI!!!!!!!!!!!!!!!!!!!!!
 OPCAOH PROC
 
 	CALL CLEARSCREEN		;funcao limpatela	
@@ -1216,25 +1123,7 @@ OPCAOH PROC
 		MOV COCIENTE, AL
 		MOV RESTO, AH
 		
-		CALL PULALINHA
-		
-		LEA DX, COCIENTEDIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV AL, COCIENTE
-		CBW  
-		CALL PRINTDEC
-		
-		CALL PULALINHA
-		
-		LEA DX, RESTODIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV AL, RESTO
-		CBW 
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1266,26 +1155,7 @@ QUATH:        JMP QUATHH
 		MOV COCIENTE, AL
 		MOV RESTO, AH
 		
-		CALL PULALINHA
-		
-		LEA DX, COCIENTEDIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV BL, COCIENTE
-		CBW  
-		CALL PRINTBIN
-		
-		CALL PULALINHA
-		
-		LEA DX, RESTODIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV BL, RESTO
-		CBW 
-						
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1311,25 +1181,7 @@ QUATH:        JMP QUATHH
 		MOV COCIENTE, AL
 		MOV RESTO, AH
 		
-		CALL PULALINHA
-		
-		LEA DX, COCIENTEDIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV BL, COCIENTE
-		CBW  
-		CALL PRINTHEXADEC
-		
-		CALL PULALINHA
-		
-		LEA DX, RESTODIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV BL, RESTO
-		CBW 
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1357,25 +1209,7 @@ QUATH:        JMP QUATHH
 		MOV COCIENTE, AL
 		MOV RESTO, AH
 		
-		CALL PULALINHA
-		
-		LEA DX, COCIENTEDIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV BL, COCIENTE
-		CBW  
-		CALL PRINTQUAT
-		
-		CALL PULALINHA
-		
-		LEA DX, RESTODIV
-		MOV AH, 9
-		INT 21H
-		
-		MOV BL, RESTO
-		CBW 
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 	
@@ -1446,13 +1280,9 @@ OPCAOI PROC
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
-		MOV AX, VAULTNUM
+		MOV BX, VAULTNUM;<======================
 							
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1488,13 +1318,9 @@ QUATI:        JMP QUATII
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
 		MOV BX, VAULTNUM
 							
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1527,13 +1353,9 @@ QUATI:        JMP QUATII
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
 		MOV BX, VAULTNUM
 							
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1566,13 +1388,9 @@ QUATI:        JMP QUATII
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
 		MOV BX, VAULTNUM
 							
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1643,13 +1461,9 @@ OPCAOJ PROC
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
-		MOV AX, VAULTNUM
+		MOV BX, VAULTNUM;<======================
 							
-		CALL PRINTDEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1685,13 +1499,9 @@ QUATJ:        JMP QUATJJ
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
 		MOV BX, VAULTNUM
 							
-		CALL PRINTBIN
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1724,13 +1534,9 @@ QUATJ:        JMP QUATJJ
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
 		MOV BX, VAULTNUM
 							
-		CALL PRINTHEXADEC
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -1763,13 +1569,9 @@ QUATJ:        JMP QUATJJ
 		
 		CALL PULALINHA
 		
-		LEA DX, RES
-		MOV AH, 9
-		INT 21H
-		
 		MOV BX, VAULTNUM
 							
-		CALL PRINTQUAT
+		CALL PRINTBASEESCOLHIDA;V1.1 - Adicionado para escolha de base no resultado!
 		
 		CALL PULALINHA
 		
@@ -2123,28 +1925,220 @@ MENSAGEM02 PROC
 MENSAGEM02 ENDP
 
 MENSAGEMRES PROC
+		CMP	AL, 31H
+		JE	DECIBASE
+		CMP AL, 32H
+		JE	BINABASE
+		CMP AL,'3'
+		JE	HEXADBASE
+		CMP AL,'4'
+		JE	QUATERBASE
+	DECIBASE:
 		MOV AH, 9
-		LEA DX, RES
+		LEA DX,RESDEC
+		INT 21H
+		RET
+	BINABASE:
+		MOV AH, 9
+		LEA DX,RESBIN
+		INT 21H
+		RET
+	HEXADBASE:
+		MOV AH, 9
+		LEA DX,RESHEXAD
+		INT 21H
+		RET
+	QUATERBASE:
+		MOV AH, 9
+		LEA DX,RESQUAT
 		INT 21H
 		RET
 MENSAGEMRES ENDP
 
+PRINTBASEESCOLHIDA PROC
+		MOV AH, 9
+		LEA DX, MSGBASE
+		INT 21H
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		CMP	AL, 31H
+		JE	DECI
+		CMP AL, 32H
+		JE	BINA
+		CMP AL,'3'
+		JE	HEXAD
+		CMP AL,'4'
+		JE	QUATERR
+	DECI:
+		CMP CHOSEOP,'H'
+		JE DECIDIV
+		CMP CHOSEOP,'h'
+		JE DECIDIV
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		MOV AX,BX
+		CALL PRINTDEC
+		RET
+	DECIDIV:
+		CALL PULALINHA
+		CALL RESDIVQUO
+		MOV AL, COCIENTE
+		CBW  
+		CALL PRINTDEC
+		CALL PULALINHA
+		CALL RESDIVRES
+		MOV AL, RESTO
+		CBW
+		CALL PRINTDEC
+		RET
+	BINA:
+		CMP CHOSEOP,'H'
+		JE BINADIV
+		CMP CHOSEOP,'h'
+		JE BINADIV
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		CALL PRINTBIN
+		RET
+	QUATERR:
+		JMP QUATER
+	BINADIV:
+		CALL PULALINHA
+		CALL RESDIVQUO
+		MOV BL, COCIENTE
+		CBW  
+		CALL PRINTBIN
+		CALL PULALINHA
+		CALL RESDIVRES
+		MOV BL, RESTO
+		CBW
+		CALL PRINTBIN
+		RET
+	HEXAD:
+		CMP CHOSEOP,'H'
+		JE HEXADIV
+		CMP CHOSEOP,'h'
+		JE HEXADIV
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		CALL PRINTHEXADEC
+		RET
+	HEXADIV:
+		CALL PULALINHA
+		CALL RESDIVQUO
+		MOV BL, COCIENTE
+		CBW  
+		CALL PRINTHEXADEC
+		CALL PULALINHA
+		CALL RESDIVRES
+		MOV BL, RESTO
+		CBW
+		CALL PRINTHEXADEC
+		RET
+	QUATER:
+		CMP CHOSEOP,'H'
+		JE QUATERDIV
+		CMP CHOSEOP,'h'
+		JE QUATERDIV
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		CALL PRINTQUAT
+		RET
+	QUATERDIV:
+		CALL PULALINHA
+		CALL RESDIVQUO
+		MOV BL, COCIENTE
+		CBW  
+		CALL PRINTQUAT
+		CALL PULALINHA
+		CALL RESDIVRES
+		MOV BL, RESTO
+		CBW
+		CALL PRINTQUAT
+		RET
+PRINTBASEESCOLHIDA ENDP
+
 AGAIN PROC
 	
-	CALL PULALINHA
-	
-	MOV AH, 9
-	LEA DX, DENOVO
-	INT 21H
+		CALL PULALINHA
+		
+		MOV AH, 9
+		LEA DX, DENOVO
+		INT 21H
 
-	MOV AH, 1
-	INT 21H
-	
-	MOV RESAGAIN, AL
-	
-	RET
+		MOV AH, 1
+		INT 21H
+		
+		MOV RESAGAIN, AL
+		
+		RET
 	
 AGAIN ENDP
+
+RESDIVQUO PROC
+		CMP	AL, 31H
+		JE	DECIBASEQUO
+		CMP AL, 32H
+		JE	BINABASEQUO
+		CMP AL,'3'
+		JE	HEXADBASEQUO
+		CMP AL,'4'
+		JE	QUATERBASEQUO
+	DECIBASEQUO:
+		LEA DX, QUOCIENTEDIV_DEC
+		MOV AH, 9
+		INT 21H
+		RET
+	BINABASEQUO:
+		LEA DX, QUOCIENTEDIV_BIN
+		MOV AH, 9
+		INT 21H
+		RET
+	HEXADBASEQUO:
+		LEA DX, QUOCIENTEDIV_HEXA
+		MOV AH, 9
+		INT 21H
+		RET
+	QUATERBASEQUO:
+		LEA DX, QUOCIENTEDIV_QUAT
+		MOV AH, 9
+		INT 21H
+		RET
+		
+RESDIVQUO ENDP
+
+RESDIVRES PROC
+		CMP	AL, 31H
+		JE	DECIBASERES
+		CMP AL, 32H
+		JE	BINABASERES
+		CMP AL,'3'
+		JE	HEXADBASERES
+		CMP AL,'4'
+		JE	QUATERBASERES
+	DECIBASERES:
+		LEA DX, RESTODIV_DEC
+		MOV AH, 9
+		INT 21H
+		RET
+	BINABASERES:
+		LEA DX, RESTODIV_BIN
+		MOV AH, 9
+		INT 21H
+		RET
+	HEXADBASERES:
+		LEA DX, RESTODIV_HEXA
+		MOV AH, 9
+		INT 21H
+		RET
+	QUATERBASERES:
+		LEA DX, RESTODIV_QUAT
+		MOV AH, 9
+		INT 21H
+		RET
+RESDIVRES ENDP
 
 END MAIN
 		
