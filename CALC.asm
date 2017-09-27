@@ -5,7 +5,7 @@ TITLE	CALCULADORA
 BARRAN		DB	0AH,0DH,'$'
 INTROCALC	DB	'CalculadoraMB8086','$'
 OP			DB 	'    Operacoes disponiveis:',0AH,0DH,'     a. AND',0AH,0DH,'     b. OR',0AH,0DH,'     c. XOR',0AH,0DH,'     d. NOT',0AH,0DH,'     e. Soma',0AH,0DH,'     f. Subtracao',0AH,0DH,'     g. Multiplicacao',0AH,0DH,'     h. Divisao',0AH,0DH,'     i. Mult por 2',0AH,0DH,'     j. Div por 2',0AH,0DH,'$'
-BASENUM		DB	' Bases numericas disponiveis:',0AH,0DH,0AH,0DH,'     1. Decimal [{0,1,2,3,4,5,6,7,8,9},[-32768, +32767]]',0AH,0DH,'     2. Binario [{0,1},MAX 16 BITS]',0AH,0DH,'     3. Hexadecimal [{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F},MAX 4 CARACTERES]',0AH,0DH,'     4. Quaternario [{0,1,2,3},MAX 8 CARACTERES]',0AH,0DH,'$'		
+BASENUM		DB	' Bases numericas disponiveis: ',0AH,0DH,0AH,0DH,'     1. Decimal [{0,1,2,3,4,5,6,7,8,9}, [-32768, +32767]] ',0AH,0DH,'     2. Binario [{0, 1}, MAX 16 BITS] ',0AH,0DH,'     3. Hexadecimal [{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F}, MAX 4 CARACTERES]',0AH,0DH,'     4. Quaternario [{0,1,2,3}, MAX 8 CARACTERES]',0AH,0DH,'$'		
 VAULTD		DW	?
 VAULTC		DW	?
 OP?			DB	0AH,0DH,' Insira a operacao desejada: $'
@@ -20,14 +20,21 @@ OPG			DB	' Opcao "g"(Mult) escolhida: $'
 OPH			DB	' Opcao "h"(Div) escolhida: $'
 OPI			DB	' Opcao "i"(Mult/2) escolhida: $'
 OPJ			DB	' Opcao "j"(Div/2) escolhida: $'
+DIV2		DB	' Digite o numero a ser dividido por 2: $'
+MUL2		DB	' Digite o numero a ser multiplicado por 2: $'
+QTDPOR2		DB	' Digite a quantidade de vezes por 2: $'
+COCIENTEDIV	DB	' O quociente da divisao deu: $'
+RESTODIV	DB	' O resto da divisao deu:     $'
 MSG1		DB	0AH,0DH,0AH,0DH,' Digite o primeiro numero: $'
 MSG2		DB	' Digite o segundo numero: $'
 MSGNOT		DB	0AH,0DH,0AH,0DH,' Digite um numero: $'
-MSGBASE		DB	0AH,0DH,0AH,0DH,' Digite a base que deseja a saída: $'
 DENOVO		DB	' Deseja realizar outra operacao?',0AH,0DH,0AH,0DH,'     1. Sim',0AH,0DH,'     2. Nao',0AH,0DH,0AH,0DH, ' Digite a opcao: $'
 RES 		DB	' O Resultado eh: $'	
 VAULTNUM	DW	?
+VAULT2		DW	?
 RESAGAIN	DB	?
+COCIENTE	DB	?
+RESTO		DB	?
 SHIFT4	DW	4;movo esse valor para o cx
 SHIFT2	DW	2;movo esse valor para o cx
 VAULTCX	DW ?;para receber hexa, preciso guardar o cx para o shift
@@ -71,30 +78,30 @@ MAIN PROC
 		JE	d
 		CMP AL,'D'
 		JE	d
-		;CMP AL,'e'
-		;JE	e
-		;CMP AL,'E'
-		;JE	e
-		;CMP AL,'f'
-		;JE	f
-		;CMP AL,'F'
-		;JE	f
-		;CMP AL,'g'
-		;JE	g
-		;CMP AL,'G'
-		;JE	g
-		;CMP AL,'h'
-		;JE	h
-		;CMP AL,'H'
-		;JE	h
-		;CMP AL,'i'
-		;JE	i
-		;CMP AL,'I'
-		;JE	i
-		;CMP AL,'j'
-		;JE	j
-		;CMP AL,'J'
-		;JE	j
+		CMP AL,'e'
+		JE	e
+		CMP AL,'E'
+		JE	e
+		CMP AL,'f'
+		JE	f
+		CMP AL,'F'
+		JE	f
+		CMP AL,'g'
+		JE	g
+		CMP AL,'G'
+		JE	g
+		CMP AL,'h'
+		JE	h
+		CMP AL,'H'
+		JE	h
+		CMP AL,'i'
+		JE	i
+		CMP AL,'I'
+		JE	i
+		CMP AL,'j'
+		JE	j
+		CMP AL,'J'
+		JE	j
 		
 	a:	CALL OPCAOA
 		CALL AGAIN
@@ -112,12 +119,29 @@ MAIN PROC
 		CALL AGAIN
 		JMP EXECUTARDENOVO
 	
-	
+	e:  CALL OPCAOE
+		CALL AGAIN
+		JMP EXECUTARDENOVO
 		
+	f:  CALL OPCAOF
+		CALL AGAIN
+		JMP EXECUTARDENOVO
 	
+	g:  CALL OPCAOG
+		CALL AGAIN
+		JMP EXECUTARDENOVO
 	
+	h:  CALL OPCAOH
+		CALL AGAIN
+		JMP EXECUTARDENOVO
 	
-	
+	i:  CALL OPCAOI
+		CALL AGAIN
+		JMP EXECUTARDENOVO
+		
+	j:  CALL OPCAOJ
+		CALL AGAIN
+		JMP EXECUTARDENOVO
 	
 	
 	
@@ -199,10 +223,13 @@ OPCAOA PROC
 		AND VAULTNUM, AX
 		
 		CALL PULALINHA
+		CALL MENSAGEMRES
 		
 		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
-		CALL PRINTBASEESCOLHIDA
+		
+		CALL PRINTDEC
 		
 		CALL PULALINHA
 		
@@ -242,7 +269,7 @@ OPCAOA PROC
 		CALL MENSAGEM01
 		
 		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
-		
+		CALL PRINTHEXADEC
 		MOV VAULTNUM,BX
 		
 		CALL MENSAGEM02
@@ -289,7 +316,7 @@ OPCAOA PROC
 OPCAOA ENDP
 
 ;-------------------------------------------------------- OPERACAO A FIM --------------------------------------------------------;
-;-------------------------------------------------------- OPERACAO B --------------------------------------------------------;
+;-------------------------------------------------------- OPERACAO B ------------------------------------------------------------;
 
 OPCAOB PROC
 		CALL CLEARSCREEN		;funcao limpatela
@@ -343,6 +370,7 @@ OPCAOB PROC
 		CALL MENSAGEMRES
 		
 		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
 		CALL PRINTDEC
 		
@@ -430,7 +458,7 @@ OPCAOB PROC
 OPCAOB ENDP
 
 ;-------------------------------------------------------- OPERACAO B FIM --------------------------------------------------------;
-;-------------------------------------------------------- OPERACAO C --------------------------------------------------------;
+;-------------------------------------------------------- OPERACAO C ------------------------------------------------------------;
 OPCAOC PROC
 		CALL CLEARSCREEN		;funcao limpatela
 		
@@ -483,6 +511,7 @@ OPCAOC PROC
 		CALL MENSAGEMRES
 		
 		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
 		CALL PRINTDEC
 		
@@ -569,7 +598,7 @@ OPCAOC PROC
 	
 OPCAOC ENDP
 ;-------------------------------------------------------- OPERACAO C FIM --------------------------------------------------------;
-;-------------------------------------------------------- OPERACAO D --------------------------------------------------------;
+;-------------------------------------------------------- OPERACAO D ------------------------------------------------------------;
 OPCAOD PROC
 		CALL CLEARSCREEN		;funcao limpatela
 		
@@ -619,6 +648,7 @@ OPCAOD PROC
 		CALL MENSAGEMRES
 		
 		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
 		
 		CALL PRINTDEC
 		
@@ -633,8 +663,7 @@ OPCAOD PROC
 		INT 21H
 		
 		CALL LEITURABIN	 ;funcao para ler BINARIO	
-	NAOQUEROZERO:
-		 
+		
 		NOT BX
 		
 		CALL PULALINHA
@@ -692,6 +721,1062 @@ OPCAOD PROC
 	
 OPCAOD ENDP
 ;-------------------------------------------------------- OPERACAO D FIM --------------------------------------------------------;
+;-------------------------------------------------------- OPERACAO E ------------------------------------------------------------;
+OPCAOE PROC
+
+	CALL CLEARSCREEN		;funcao limpatela	
+	CALL PULALINHA
+	
+		LEA DX, OPE ;mensagem opcao a		
+		MOV AH, 9	;exibe
+		INT 21H
+		
+		CALL PULALINHA
+		CALL PULALINHA
+		
+		LEA DX, BASENUM
+		MOV AH, 9
+		INT 21H
+	
+		LEA DX, BASE?
+		INT 21H
+		
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		MOV DL, AL
+		
+		CMP	DL, 31H	;comeca o switch da escravidao 2.0
+		JE	DECIMALE
+		CMP DL, 32H
+		JE	BINARIOE
+		CMP DL,'3'
+		JE	HEXADECIMALE
+		CMP DL,'4'
+		JE	QUATE
+		
+	DECIMALE:
+	
+		CALL MENSAGEM01
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,AX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		ADD VAULTNUM, AX
+		
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		
+		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
+		
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		RET ;<-----------------------------mudei para RET para n ter q ficar preocupado com o comprimento das linhas do jmp
+	
+	BINARIOE:
+		
+		;CALL PULALINHA
+		;CALL PULALINHA
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURABIN	 ;funcao para ler BINARIO	
+		
+		MOV VAULTNUM, BX ;move o primeiro valor lido para variavel
+		
+		;CALL PRINTBIN
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURABIN ;le outro numero
+		
+		ADD BX, VAULTNUM
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		RET
+	
+	HEXADECIMALE:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		
+		ADD BX,VAULTNUM
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+	
+		RET
+		
+	QUATE:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAQUAT	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAQUAT ;funcao para ler tipo da base e a base
+		
+		ADD BX,VAULTNUM
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+	
+		RET
+		
+OPCAOE ENDP
+;-------------------------------------------------------- OPERACAO E FIM --------------------------------------------------------;
+
+;-------------------------------------------------------- OPERACAO F ------------------------------------------------------------;
+OPCAOF PROC
+
+	CALL CLEARSCREEN		;funcao limpatela	
+	CALL PULALINHA
+	
+		LEA DX, OPF ;mensagem opcao a		
+		MOV AH, 9	;exibe
+		INT 21H
+		
+		CALL PULALINHA
+		CALL PULALINHA
+		
+		LEA DX, BASENUM
+		MOV AH, 9
+		INT 21H
+	
+		LEA DX, BASE?
+		INT 21H
+		
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		MOV DL, AL
+		
+		CMP	DL, 31H	;comeca o switch da escravidao 2.0
+		JE	DECIMALF
+		CMP DL, 32H
+		JE	BINARIOF
+		CMP DL,'3'
+		JE	HEXADECIMALF
+		CMP DL,'4'
+		JE	QUATF
+		
+	DECIMALF:
+	
+		CALL MENSAGEM01
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,AX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		SUB VAULTNUM, AX
+		
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		
+		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
+		
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		RET ;<-----------------------------mudei para RET para n ter q ficar preocupado com o comprimento das linhas do jmp
+	
+	BINARIOF:
+		
+		;CALL PULALINHA
+		;CALL PULALINHA
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURABIN	 ;funcao para ler BINARIO	
+		
+		MOV VAULTNUM, BX ;move o primeiro valor lido para variavel
+		
+		;CALL PRINTBIN
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURABIN ;le outro numero
+		
+		SUB VAULTNUM, BX
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		RET
+	
+	HEXADECIMALF:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		
+		SUB VAULTNUM, BX
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+	
+		RET
+		
+	QUATF:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAQUAT	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAQUAT ;funcao para ler tipo da base e a base
+		
+		SUB VAULTNUM, BX
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+	
+		RET
+		
+OPCAOF ENDP
+;-------------------------------------------------------- OPERACAO F FIM --------------------------------------------------------;
+
+;-------------------------------------------------------- OPERACAO G ------------------------------------------------------------;
+OPCAOG PROC
+
+	CALL CLEARSCREEN		;funcao limpatela	
+	CALL PULALINHA
+	
+		LEA DX, OPG ;mensagem opcao a		
+		MOV AH, 9	;exibe
+		INT 21H
+		
+		CALL PULALINHA
+		CALL PULALINHA
+		
+		LEA DX, BASENUM
+		MOV AH, 9
+		INT 21H
+	
+		LEA DX, BASE?
+		INT 21H
+		
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		MOV DL, AL
+		
+		CMP	DL, 31H	;comeca o switch da escravidao 2.0
+		JE	DECIMALG
+		CMP DL, 32H
+		JE	BINARIOG
+		CMP DL,'3'
+		JE	HEXADECIMALG
+		CMP DL,'4'
+		JE	QUATG
+		
+	DECIMALG:
+	
+		CALL MENSAGEM01
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,AX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		MUL VAULTNUM
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		CALL MENSAGEMRES
+		
+		MOV AX, VAULTNUM
+		;MOV BX, VAULTNUM ;<<<<<<<<< O QUE VOCE ME PEDIU
+		
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		RET ;<-----------------------------mudei para RET para n ter q ficar preocupado com o comprimento das linhas do jmp
+	
+	BINARIOG:
+		
+		;CALL PULALINHA
+		;CALL PULALINHA
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURABIN	 ;funcao para ler BINARIO	
+		
+		MOV VAULTNUM, BX ;move o primeiro valor lido para variavel
+		
+		;CALL PRINTBIN
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURABIN ;le outro numero
+		MOV AX, BX
+		
+		MUL VAULTNUM
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		MOV BX, VAULTNUM
+		
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		RET
+	
+	HEXADECIMALG:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM,BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		MOV AX, BX
+		
+		MUL VAULTNUM
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		MOV BX, VAULTNUM
+		
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+	
+		RET
+		
+	QUATG:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAQUAT	;funcao para ler tipo da base e a base
+		
+		MOV AX, BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAQUAT ;funcao para ler tipo da base e a base
+		
+		MUL BX
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		CALL MENSAGEMRES
+		
+		MOV BX, VAULTNUM
+		
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+	
+		RET
+		
+OPCAOG ENDP
+;-------------------------------------------------------- OPERACAO G FIM --------------------------------------------------------;
+
+;-------------------------------------------------------- OPERACAO H ------------------------------------------------------------;
+OPCAOH PROC
+
+	CALL CLEARSCREEN		;funcao limpatela	
+	CALL PULALINHA
+	
+		LEA DX, OPH ;mensagem opcao a		
+		MOV AH, 9	;exibe
+		INT 21H
+		
+		CALL PULALINHA
+		CALL PULALINHA
+		
+		LEA DX, BASENUM
+		MOV AH, 9
+		INT 21H
+	
+		LEA DX, BASE?
+		INT 21H
+		
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		MOV DL, AL
+		
+		CMP	DL, 31H	;comeca o switch da escravidao 2.0
+		JE	DECIMALH
+		CMP DL, 32H
+		JE	BINARIOH
+		CMP DL,'3'
+		JE	HEXADECIMALH
+		CMP DL,'4'
+		JE	QUATH
+		
+	DECIMALH:
+	
+		CALL MENSAGEM01
+		
+		XOR AX, AX
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM, AX ;Divisao dividendo / divisor dividendo AX divisor 8 bits
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURADEC	;funcao para ler tipo da base e a base
+		
+		MOV RESAGAIN, AL
+		MOV AX, VAULTNUM
+		
+		;PRIMEIRO VAULTNUM SEGUNDO AX
+		;PRIMEIRO AX SEGUNDO VAU
+		
+		
+		DIV RESAGAIN
+		MOV COCIENTE, AL
+		MOV RESTO, AH
+		
+		CALL PULALINHA
+		
+		LEA DX, COCIENTEDIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV AL, COCIENTE
+		CBW  
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		LEA DX, RESTODIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV AL, RESTO
+		CBW 
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		RET ;<-----------------------------mudei para RET para n ter q ficar preocupado com o comprimento das linhas do jmp
+
+
+HEXADECIMALH: JMP HEXADECIMALHH		
+QUATH:        JMP QUATHH
+
+	BINARIOH:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURABIN	 ;funcao para ler BINARIO	
+		
+		MOV VAULTNUM, BX ;move o primeiro valor lido para variavel
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURABIN ;le outro numero
+		;HEYYY
+		MOV RESAGAIN, BL
+		MOV AX, VAULTNUM
+		
+		;PRIMEIRO VAULTNUM SEGUNDO AX
+		;PRIMEIRO AX SEGUNDO VAU
+		
+		DIV RESAGAIN
+		MOV COCIENTE, AL
+		MOV RESTO, AH
+		
+		CALL PULALINHA
+		
+		LEA DX, COCIENTEDIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV BL, COCIENTE
+		CBW  
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		LEA DX, RESTODIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV BL, RESTO
+		CBW 
+						
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		RET
+	
+	HEXADECIMALHH:
+		
+		CALL MENSAGEM01
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM, BX
+		
+		CALL MENSAGEM02
+		CALL LEITURAHEXAD	;funcao para ler tipo da base e a base
+		;HEEEEEEY
+		MOV RESAGAIN, BL
+		MOV AX, VAULTNUM
+		
+		;PRIMEIRO VAULTNUM SEGUNDO AX
+		;PRIMEIRO AX SEGUNDO VAU
+		
+		DIV RESAGAIN
+		MOV COCIENTE, AL
+		MOV RESTO, AH
+		
+		CALL PULALINHA
+		
+		LEA DX, COCIENTEDIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV BL, COCIENTE
+		CBW  
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+		
+		LEA DX, RESTODIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV BL, RESTO
+		CBW 
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+		
+		RET
+		
+	QUATHH:
+		
+		CALL MENSAGEM01
+		
+		CALL LEITURAQUAT	;funcao para ler tipo da base e a base
+		
+		MOV VAULTNUM, BX
+		
+		CALL MENSAGEM02
+		
+		CALL LEITURAQUAT 	;funcao para ler tipo da base e a base
+		;HEEEEEEEEEEEEEEEEEY
+		MOV RESAGAIN, BL
+		MOV AX, VAULTNUM
+		
+		;PRIMEIRO VAULTNUM SEGUNDO AX
+		;PRIMEIRO AX SEGUNDO VAU
+		
+		DIV RESAGAIN
+		MOV COCIENTE, AL
+		MOV RESTO, AH
+		
+		CALL PULALINHA
+		
+		LEA DX, COCIENTEDIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV BL, COCIENTE
+		CBW  
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+		
+		LEA DX, RESTODIV
+		MOV AH, 9
+		INT 21H
+		
+		MOV BL, RESTO
+		CBW 
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+	
+		RET
+		
+OPCAOH ENDP
+;-------------------------------------------------------- OPERACAO H FIM --------------------------------------------------------;
+
+;-------------------------------------------------------- OPERACAO I ------------------------------------------------------------;
+OPCAOI PROC
+
+	CALL CLEARSCREEN		;funcao limpatela	
+	CALL PULALINHA
+	
+		LEA DX, OPI ;mensagem opcao a		
+		MOV AH, 9	;exibe
+		INT 21H
+		
+		CALL PULALINHA
+		CALL PULALINHA
+		
+		LEA DX, BASENUM
+		MOV AH, 9
+		INT 21H
+	
+		LEA DX, BASE?
+		INT 21H
+		
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		MOV DL, AL
+		
+		CMP	DL, 31H	;comeca o switch da escravidao 2.0
+		JE	DECIMALI
+		CMP DL, 32H
+		JE	BINARIOI
+		CMP DL,'3'
+		JE	HEXADECIMALI
+		CMP DL,'4'
+		JE	QUATI
+		
+	DECIMALI:
+	
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, MUL2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURADEC
+		MOV VAULTNUM, AX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURADEC
+		
+		MOV CL, AL
+		
+		MOV AX, VAULTNUM
+		
+		SHL AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV AX, VAULTNUM
+							
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		RET 
+
+HEXADECIMALI: JMP HEXADECIMALII		
+QUATI:        JMP QUATII
+
+	BINARIOI:
+	
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, MUL2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURABIN
+		MOV VAULTNUM, BX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURABIN
+		
+		MOV CL, BL
+		
+		MOV AX, VAULTNUM
+		
+		SHL AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV BX, VAULTNUM
+							
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		RET 
+	
+	HEXADECIMALII:
+		
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, MUL2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAHEXAD
+		MOV VAULTNUM, BX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAHEXAD
+		
+		MOV CL, BL
+		
+		MOV AX, VAULTNUM
+		
+		SHL AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV BX, VAULTNUM
+							
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+		
+		RET
+		
+	QUATII:
+	
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, MUL2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAQUAT
+		MOV VAULTNUM, BX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAQUAT
+		
+		MOV CL, BL
+		
+		MOV AX, VAULTNUM
+		
+		SHL AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV BX, VAULTNUM
+							
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+		
+		RET
+		
+OPCAOI ENDP
+;-------------------------------------------------------- OPERACAO I FIM --------------------------------------------------------;
+
+;-------------------------------------------------------- OPERACAO J ------------------------------------------------------------;
+OPCAOJ PROC
+
+	CALL CLEARSCREEN		;funcao limpatela	
+	CALL PULALINHA
+	
+		LEA DX, OPJ ;mensagem opcao a		
+		MOV AH, 9	;exibe
+		INT 21H
+		
+		CALL PULALINHA
+		CALL PULALINHA
+		
+		LEA DX, BASENUM
+		MOV AH, 9
+		INT 21H
+	
+		LEA DX, BASE?
+		INT 21H
+		
+		
+		MOV	AH, 01H	;leitura da opcao escolhida
+		INT	21H
+		
+		MOV DL, AL
+		
+		CMP	DL, 31H	;comeca o switch da escravidao 2.0
+		JE	DECIMALJ
+		CMP DL, 32H
+		JE	BINARIOJ
+		CMP DL,'3'
+		JE	HEXADECIMALJ
+		CMP DL,'4'
+		JE	QUATJ
+		
+	DECIMALJ:
+	
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, DIV2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURADEC
+		MOV VAULTNUM, AX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURADEC
+		
+		MOV CL, AL
+		
+		MOV AX, VAULTNUM
+		
+		SHR AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV AX, VAULTNUM
+							
+		CALL PRINTDEC
+		
+		CALL PULALINHA
+		
+		RET 
+
+HEXADECIMALJ: JMP HEXADECIMALJJ		
+QUATJ:        JMP QUATJJ
+
+	BINARIOJ:
+	
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, DIV2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURABIN
+		MOV VAULTNUM, BX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURABIN
+		
+		MOV CL, BL
+		
+		MOV AX, VAULTNUM
+		
+		SHR AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV BX, VAULTNUM
+							
+		CALL PRINTBIN
+		
+		CALL PULALINHA
+		
+		RET 
+	
+	HEXADECIMALJJ:
+		
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, DIV2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAHEXAD
+		MOV VAULTNUM, BX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAHEXAD
+		
+		MOV CL, BL
+		
+		MOV AX, VAULTNUM
+		
+		SHR AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV BX, VAULTNUM
+							
+		CALL PRINTHEXADEC
+		
+		CALL PULALINHA
+		
+		RET
+		
+	QUATJJ:
+	
+		CALL PULALINHA
+		CALL PULALINHA
+	
+		LEA DX, DIV2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAQUAT
+		MOV VAULTNUM, BX
+		
+		LEA DX, QTDPOR2
+		MOV AH, 9
+		INT 21H
+		
+		CALL LEITURAQUAT
+		
+		MOV CL, BL
+		
+		MOV AX, VAULTNUM
+		
+		SHR AX, CL
+		MOV VAULTNUM, AX
+		
+		CALL PULALINHA
+		
+		LEA DX, RES
+		MOV AH, 9
+		INT 21H
+		
+		MOV BX, VAULTNUM
+							
+		CALL PRINTQUAT
+		
+		CALL PULALINHA
+		
+		RET
+		
+OPCAOJ ENDP
+;-------------------------------------------------------- OPERACAO J FIM --------------------------------------------------------;
 
 PRINTBIN PROC
 
@@ -883,9 +1968,6 @@ SAIDA:
 
 LEITURADEC ENDP
 
-
-
-
 LEITURABIN PROC
 		
 		MOV CX, 16	;inicializa contador de digitos
@@ -1046,47 +2128,6 @@ MENSAGEMRES PROC
 		INT 21H
 		RET
 MENSAGEMRES ENDP
-PRINTBASEESCOLHIDA PROC
-		MOV AH, 9
-		LEA DX, MSGBASE
-		INT 21H
-		
-		MOV	AH, 01H	;leitura da opcao escolhida
-		INT	21H
-		
-		MOV DL, AL
-		
-		CMP	DL, 31H
-		JE	DECI
-		CMP DL, 32H
-		JE	BINA
-		CMP DL,'3'
-		JE	HEXAD
-		CMP DL,'4'
-		JE	QUATER
-	DECI:
-		MOV AX,BX
-		CALL PULALINHA
-		CALL MENSAGEMRES
-		CALL PRINTDEC
-		JMP TERMINAPRINTBASEESCOLHIDA
-	BINA:
-		CALL PULALINHA
-		CALL MENSAGEMRES
-		CALL PRINTBIN
-		JMP TERMINAPRINTBASEESCOLHIDA
-	HEXAD:
-		CALL PULALINHA
-		CALL MENSAGEMRES
-		CALL PRINTHEXADEC
-		JMP TERMINAPRINTBASEESCOLHIDA
-	QUATER:
-		CALL PULALINHA
-		CALL MENSAGEMRES
-		CALL PRINTQUAT
-	TERMINAPRINTBASEESCOLHIDA:
-		RET
-PRINTBASEESCOLHIDA ENDP
 
 AGAIN PROC
 	
