@@ -49,13 +49,22 @@ SHIFT4				DW	4;movo esse valor para o cx
 SHIFT2				DW	2;movo esse valor para o cx
 VAULTCX				DW  ?;para receber hexa, preciso guardar o cx para o shift
 CHOSEOP				DB  ?;V1.1 - escolhe operacao
+;V1.2 - para a tela de loading!
+PONTOBARRA			DB	219,'$'
+PONTO				DB	' . ','$'
+CARREGAR 			DB	0AH,0DH,09H,'LOADING THE PROGRAM INTO MEMORY','$'
+BARRALOAD 			DB	0AH,0DH,0AH,0DH,09H,09H,'0%',09H,'100%',0AH,0DH,09H,09H,'$'
+VAULT				DW ?
+DOISMILH			DW 0FFFH
+ZERO				DB 1
+LOADVAROK			DB	0AH,0DH,09H,'   LOADED!','$'
+INICIALIZANDO		DB	0AH,0DH,09H,'INITIALIZING','$'
 
 
 .CODE
 MAIN PROC
-
-		MOV AX,@DATA	;recebe variáveis globais em AX
-		MOV DS,AX	;move as variáveis para DS
+		CALL FIRST
+	FIRST_MAIN:
 		
 		CALL	INTERFACEH ;chama a funcao da interface
 		
@@ -172,7 +181,7 @@ EXECUTARDENOVO:
 DEUUM:
 		
 		CALL CLEARSCREEN
-		CALL MAIN
+		JMP FIRST_MAIN
 		
 DEUDOIS:
 		
@@ -2139,6 +2148,63 @@ RESDIVRES PROC
 		INT 21H
 		RET
 RESDIVRES ENDP
+
+FIRST PROC
+		MOV	AX,@DATA
+		MOV	DS,AX
+		
+		MOV	AX,0007H	;Codigo para limpar a tela
+		INT	10H	;interrupcao da tela
+		
+		MOV DX,offset CARREGAR
+		MOV AH,9
+		INT 21h
+		
+		MOV DX,offset BARRALOAD
+		MOV AH,9
+		INT 21h
+		
+		MOV CX,10
+	GETOVERHERE1:
+		MOV VAULTCX,CX
+		mov AX,8600h
+		MOV DX,0740h
+		MOV CX,0fh
+		int 15h
+		LEA dx,PONTOBARRA
+		mov ah,9
+		int 21h
+		MOV CX,VAULTCX
+		LOOP GETOVERHERE1
+	
+		MOV AH,02H
+		MOV CX,9
+	;----------------------------------------------------
+		MOV	AX,0007H	;Codigo para limpar a tela
+		INT	10H	;interrupcao da tela
+	
+		MOV DX,offset LOADVAROK
+		MOV AH,9
+		INT 21h
+		
+		MOV DX,offset INICIALIZANDO
+		MOV AH,9
+		INT 21h
+		MOV CX,3
+	GETOVERHERE2:
+		MOV VAULTCX,CX
+		mov AX,8600h
+		MOV DX,4F40h
+		MOV CX,0fh
+		int 15h
+		mov dx,offset PONTO
+		mov ah,9
+		int 21h
+		MOV CX,VAULTCX
+		LOOP GETOVERHERE2
+		
+		RET
+FIRST ENDP
 
 END MAIN
 		
